@@ -23,15 +23,19 @@ impl fmt::Debug for Cli {
 
 fn main() {
     let args = Cli::parse();
-    let lines = read_lines(&args.path).expect("Reading lines");
-    for line in lines {
-        if let Ok(words) = line {
-            if words.contains(&args.pattern){
-                println!("{}", words)
+    let content = read_lines(&args.path).expect("Reading content");
+    find_matches(content, &args.pattern);
+    // println!("{:?}", args);
+}
+
+fn find_matches(content: io::Lines<io::BufReader<File>>, pattern: &str){
+    for lines in content {
+        if let Ok(line) = lines {
+            if line.contains(pattern){
+                println!("{}", line)
             }
         }
     }
-    // println!("{:?}", args);
 }
 
 fn read_lines<P>(filename: P) -> Result<io::Lines<io::BufReader<File>>>
