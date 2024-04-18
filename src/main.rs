@@ -21,5 +21,6 @@ impl fmt::Debug for Cli {
 fn main() {
     let args = Cli::parse();
     let content = mygrep::read_lines(&args.path).expect("Reading content");
-    mygrep::find_matches(content, &args.pattern, &mut std::io::stdout());
+    let result = mygrep::find_matches(content, &args.pattern, &mut std::io::stdout());
+    println!("{}", result)
 }
