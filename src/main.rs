@@ -1,6 +1,6 @@
 #![allow(unused)]
-use std::fmt;
-use clap::Parser;
+use std::{fmt, fs::File, io::{Error, ErrorKind, Write}};
+use clap::{Parser};
 use anyhow::{Context, Result};
 use std::io::Read;
 #[derive(Parser, Default)]
@@ -11,6 +11,8 @@ struct Cli {
     path: std::path::PathBuf,
     #[clap(short, long)]
     replace: Option<String>,
+    #[clap(short, long)]
+    new_file: Option<std::path::PathBuf>,
 }
 
 impl fmt::Debug for Cli {
@@ -19,6 +21,7 @@ impl fmt::Debug for Cli {
             .field("pattern", &self.pattern)
             .field("path", &self.path)
             .field("replace", &self.path)
+            .field("new_file", &self.new_file)
             .finish()
     }
 }
@@ -32,8 +35,12 @@ fn main() {
     
     let mut buffer = Vec::new();
     found_match_instances.read_to_end(&mut buffer).expect("Failed to read to buffer");
-
-    let output = String::from_utf8(buffer).expect("Failed to convert to String");
-
-    println!("{}", output);
+    
+    if args.replace.is_some() && args.new_file.is_some() {
+        let mut new_file = File::create(args.new_file.unwrap()).expect("error");
+        new_file.write_all(&buffer).expect("Failed to write file")
+    } else {
+        let output = String::from_utf8(buffer).expect("Failed to convert to String");
+        println!("{}", output);
+    }
 }
