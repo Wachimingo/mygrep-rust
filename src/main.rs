@@ -1,4 +1,3 @@
-#![allow(unused)]
 use std::{fmt, fs::File, io::{Error, ErrorKind, Write}};
 use clap::{Parser};
 use anyhow::{Context, Result};
